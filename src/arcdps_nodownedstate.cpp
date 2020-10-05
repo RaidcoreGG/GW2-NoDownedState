@@ -118,7 +118,7 @@ uintptr_t mod_combat(cbtevent* ev, ag* src, ag* dst, char* skillname, uint64_t i
 					ip.ki.dwFlags = KEYEVENTF_SCANCODE;
 					SendInput(1, &ip, sizeof(INPUT));
 
-					Sleep(15);
+					Sleep(5);
 
 					keybd_event(VK_DIVIDE, 0x8f, 0, 0);
 					keybd_event(VK_DIVIDE, 0x8f, KEYEVENTF_KEYUP, 0);
@@ -127,7 +127,7 @@ uintptr_t mod_combat(cbtevent* ev, ag* src, ag* dst, char* skillname, uint64_t i
 					keybd_event(0x47, 0x8f, 0, 0);
 					keybd_event(0x47, 0x8f, KEYEVENTF_KEYUP, 0);
 
-					Sleep(15);
+					Sleep(5);
 
 					ip.ki.dwFlags = KEYEVENTF_SCANCODE;
 					SendInput(1, &ip, sizeof(INPUT));
