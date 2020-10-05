@@ -15,7 +15,7 @@ extern "C" __declspec(dllexport) void* get_release_addr();
 arcdps_exports* mod_init();
 uintptr_t mod_release();
 uintptr_t mod_wnd(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-uintptr_t mod_combat(cbtevent* ev, ag* src, ag* dst, char* skillname);
+uintptr_t mod_combat(cbtevent* ev, ag* src, ag* dst, char* skillname, uint64_t id, uint64_t revision);
 uintptr_t mod_options(); /* id3dd9::present callback, appending to the end of options window in arcdps, fn() */
 
 bool enable_nodownedstate = false;
@@ -43,24 +43,24 @@ arcdps_exports* mod_init()
 	//AllocConsole();
 
 	/* big buffer */
-	/*char buff[4096];
-	char* p = &buff[0];
-	p += _snprintf(p, 400, "==== mod_init ====\n");
-	p += _snprintf(p, 400, "arcdps: %s\n", arcvers);*/
+	//char buff[4096];
+	//char* p = &buff[0];
+	//p += _snprintf(p, 400, "==== mod_init ====\n");
+	//p += _snprintf(p, 400, "arcdps: %s\n", arcvers);
 
 	/* print */
-	/*DWORD written = 0;
-	HANDLE hnd = GetStdHandle(STD_OUTPUT_HANDLE);
-	WriteConsoleA(hnd, &buff[0], (DWORD)(p - &buff[0]), &written, 0);*/
+	//DWORD written = 0;
+	//HANDLE hnd = GetStdHandle(STD_OUTPUT_HANDLE);
+	//WriteConsoleA(hnd, &buff[0], (DWORD)(p - &buff[0]), &written, 0);
 
 	/* for arcdps */
 	memset(&arc_exports, 0, sizeof(arcdps_exports));
 	arc_exports.sig = 0x2241D010;
 	arc_exports.size = sizeof(arcdps_exports);
 	arc_exports.out_name = "No Downed State (by DeltaxHunter)";
-	arc_exports.out_build = "2020-09-07";
+	arc_exports.out_build = "2020-10-05";
 	arc_exports.wnd_nofilter = mod_wnd;
-	arc_exports.combat = mod_combat;
+	arc_exports.combat_local = mod_combat;
 	arc_exports.options_end = mod_options;
 	//arc_exports.size = (uintptr_t)"error message if you decide to not load, sig must be 0";
 
@@ -89,35 +89,23 @@ uintptr_t mod_options()
 
 /* combat callback -- may be called asynchronously. return ignored */
 /* one participant will be party/squad, or minion of. no spawn statechange events. despawn statechange only on marked boss npcs */
-uintptr_t mod_combat(cbtevent* ev, ag* src, ag* dst, char* skillname)
+uintptr_t mod_combat(cbtevent* ev, ag* src, ag* dst, char* skillname, uint64_t id, uint64_t revision)
 {
 	/* big buffer */
 	//char buff[4096];
 	//char* p = &buff[0];
 
+	//p += _snprintf(p, 400, "-id: %u\n", id);
+	//p += _snprintf(p, 400, "-revision: %u\n", revision);
+
 	if (enable_nodownedstate)
 	{
 		if (ev) {
 
-			if (src->self == 1)
+			if (dst->self == 1)
 			{
-				//p += _snprintf(p, 400, "source agent: %s (%0llx:%u, %lx:%lx), master: %u\n", src->name, ev->src_agent, ev->src_instid, src->prof, src->elite, ev->src_master_instid);
-				if (ev->is_statechange == 5) {
-					//p += _snprintf(p, 400, "-is_statechange: %u\n", ev->is_statechange);
-
-					/*keybd_event(0x4A, 0x8f, 0, 0);
-					keybd_event(0x4A, 0x8f, KEYEVENTF_KEYUP, 0);
-
-					keybd_event(VK_DIVIDE, 0x8f, 0, 0);
-					keybd_event(VK_DIVIDE, 0x8f, KEYEVENTF_KEYUP, 0);
-					keybd_event(0x47, 0x8f, 0, 0);
-					keybd_event(0x47, 0x8f, KEYEVENTF_KEYUP, 0);
-					keybd_event(0x47, 0x8f, 0, 0);
-					keybd_event(0x47, 0x8f, KEYEVENTF_KEYUP, 0);
-
-					keybd_event(0x4A, 0x8f, 0, 0);
-					keybd_event(0x4A, 0x8f, KEYEVENTF_KEYUP, 0);*/
-
+				if(ev->skillid == 770)
+				{
 					INPUT ip;
 
 					ip.type = INPUT_KEYBOARD;
@@ -152,8 +140,8 @@ uintptr_t mod_combat(cbtevent* ev, ag* src, ag* dst, char* skillname)
 	}
 
 	/* print */
-	/*DWORD written = 0;
-	HANDLE hnd = GetStdHandle(STD_OUTPUT_HANDLE);
-	WriteConsoleA(hnd, &buff[0], (DWORD)(p - &buff[0]), &written, 0);*/
+	//DWORD written = 0;
+	//HANDLE hnd = GetStdHandle(STD_OUTPUT_HANDLE);
+	//WriteConsoleA(hnd, &buff[0], (DWORD)(p - &buff[0]), &written, 0);
 	return 0;
 }
